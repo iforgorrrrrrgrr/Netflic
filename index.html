@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NETFLIC // Cinema & Video Production Portfolio</title>
+  <meta name="description"
+    content="Premium cinematic client video gallery — motion graphics, VFX, high-end commercials, directorship, and documentary work.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#000921',
+              surface: '#041033',
+              card: '#071540',
+              cardHover: '#0c1f5c',
+              accent: '#305CDE',
+              accentHover: '#244ab7',
+              accentLight: '#7aa0ff',
+              accentGlow: '#1a3fa8',
+              muted: '#6a84c4',
+              border: '#152d6e',
+              borderHover: '#305CDE',
+              dark: '#00061a',
+              hero: '#010c2a',
+              stats: '#020e30',
+            }
+          },
+          fontFamily: {
+            sans:    ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            royal:   ['Cormorant Garamond', 'Georgia', 'serif'],
+          },
+          boxShadow: {
+            'glow-sm': '0 0 15px -3px rgba(48, 92, 222, 0.35)',
+            'glow': '0 0 25px -5px rgba(48, 92, 222, 0.5)',
+            'glow-lg': '0 0 50px -8px rgba(48, 92, 222, 0.7)',
+            'glow-xl': '0 0 80px -10px rgba(48, 92, 222, 0.9)',
+            'inner-glow': 'inset 0 0 30px rgba(48,92,222,0.12)',
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'float-slow': 'float 9s ease-in-out infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+            'pulse-ring': 'pulse-ring 2s cubic-bezier(0.4,0,0.6,1) infinite',
+            'scan-line': 'scan-line 4s linear infinite',
+            'counter-up': 'counter-up 0.6s ease-out forwards',
+          },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-18px)' } },
+            shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+            'pulse-ring': { '0%,100%': { opacity: '1' }, '50%': { opacity: '.4' } },
+            'scan-line': { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100vh)' } },
+            'counter-up': { from: { opacity: '0', transform: 'translateY(10px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    /* ─── Scrollbar ──────────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #000921;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #152d6e;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #305CDE;
+    }
+
+    /* ─── Global ─────────────────────────────────────────── */
+    [x-cloak] {
+      display: none !important;
+    }
+
+    body {
+      background: #000921;
+      overflow-x: hidden;
+    }
+
+    /* ─── Scan line FX ───────────────────────────────────── */
+    .scan-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(48, 92, 222, 0.4), transparent);
+      animation: scan-line 8s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ─── Noise overlay ──────────────────────────────────── */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* ─── Section separators ─────────────────────────────── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #305CDE 30%, #7aa0ff 50%, #305CDE 70%, transparent);
+      opacity: 0.4;
+    }
+
+    /* ─── Floating orbs ──────────────────────────────────── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(48, 92, 222, 0.15) 0%, transparent 70%);
+      top: -100px;
+      left: -150px;
+    }
+
+    .orb-2 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(122, 160, 255, 0.1) 0%, transparent 70%);
+      top: 60%;
+      right: -100px;
+      animation-delay: -3s;
+      animation-duration: 10s;
+    }
+
+    .orb-3 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(48, 92, 222, 0.12) 0%, transparent 70%);
+      bottom: 10%;
+      left: 30%;
+      animation-delay: -5s;
+    }
+
+    /* ─── Card spotlight effect ──────────────────────────── */
+    .card-spotlight {
+      background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(48, 92, 222, 0.12), transparent 60%);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: inherit;
+    }
+
+    .card-spotlight-wrapper:hover .card-spotlight {
+      opacity: 1;
+    }
+
+    /* ─── Shimmer skeleton ───────────────────────────────── */
+    .shimmer-bg {
+      background: linear-gradient(90deg, #071540 25%, #152d6e 50%, #071540 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s linear infinite;
+    }
+
+    /* ─── Hero gradient mesh ─────────────────────────────── */
+    .hero-mesh {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(48, 92, 222, 0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 50%, rgba(122, 160, 255, 0.08) 0%, transparent 60%),
+        #000921;
+    }
+
+    /* ─── Stats section bg ───────────────────────────────── */
+    .stats-section {
+      background:
+        linear-gradient(180deg, #000921 0%, #020e30 30%, #041033 60%, #020e30 80%, #000921 100%);
+      border-top: 1px solid rgba(48, 92, 222, 0.3);
+      border-bottom: 1px solid rgba(48, 92, 222, 0.3);
+    }
+
+    /* ─── Gallery section bg ─────────────────────────────── */
+    .gallery-section {
+      background: linear-gradient(180deg, #000921 0%, #02081f 40%, #000921 100%);
+    }
+
+    /* ─── Gradient text ──────────────────────────────────── */
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #7aa0ff 50%, #305CDE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── Animated border ────────────────────────────────── */
+    .animated-border {
+      position: relative;
+    }
+
+    .animated-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #305CDE, #7aa0ff, #305CDE);
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .animated-border:hover::before {
+      opacity: 1;
+    }
+
+    /* ─── Progress bar ───────────────────────────────────── */
+    .progress-bar {
+      height: 2px;
+      background: linear-gradient(90deg, #305CDE, #7aa0ff);
+      border-radius: 1px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px rgba(48, 92, 222, 0.6);
+    }
+
+    /* ─── Tag hover glow ─────────────────────────────────── */
+    .tag-blue {
+      transition: all 0.2s;
+    }
+
+    .tag-blue:hover {
+      background: rgba(48, 92, 222, 0.35) !important;
+      border-color: rgba(122, 160, 255, 0.6) !important;
+      box-shadow: 0 0 12px rgba(48, 92, 222, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* ─── Keyboard hint ──────────────────────────────────── */
+    kbd {
+      display: inline-block;
+      padding: 1px 6px;
+      font-size: 10px;
+      background: rgba(48, 92, 222, 0.15);
+      border: 1px solid rgba(48, 92, 222, 0.3);
+      border-radius: 4px;
+      font-family: 'Space Grotesk', monospace;
+      color: #7aa0ff;
+    }
+
+    /* ─── Modal tabs ─────────────────────────────────────── */
+    .modal-tab {
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    .modal-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #305CDE;
+      border-radius: 1px;
+      transform: scaleX(0);
+      transition: transform 0.25s ease;
+      box-shadow: 0 0 8px rgba(48, 92, 222, 0.6);
+    }
+
+    .modal-tab.active::after {
+      transform: scaleX(1);
+    }
+
+    .modal-tab.active {
+      color: #7aa0ff;
+    }
+
+    /* ─── Card reveal animation ──────────────────────────── */
+    .card-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .card-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── no-scrollbar ───────────────────────────────────── */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       OBRA MAESTRA DEL ARTE — Royal Headline
+    ───────────────────────────────────────────────────────── */
+    .obra-maestra {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      display: block;
+    }
+
+    .obra-text {
+      /* Gradient referencing the brand palette: deep navy → royal blue → ice blue */
+      background: linear-gradient(
+        130deg,
+        #c8d8ff 0%,
+        #7aa0ff 28%,
+        #305CDE 55%,
+        #7aa0ff 78%,
+        #e8efff 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: background-position 0.6s ease, filter 0.4s ease;
+      display: inline;
+    }
+
+    .obra-italic {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      background: linear-gradient(
+        130deg,
+        #8fb4ff 0%,
+        #ffffff 50%,
+        #8fb4ff 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: background-position 0.6s ease;
+      display: inline;
+      margin-left: 0.08em;
+    }
+
+    /* Hover: slide gradient + soft glow */
+    .obra-maestra:hover .obra-text {
+      background-position: right center;
+      filter: drop-shadow(0 0 22px rgba(122, 160, 255, 0.55));
+    }
+    .obra-maestra:hover .obra-italic {
+      background-position: right center;
+    }
+
+    /* ─── Stat number royal gradient ────────────────────── */
+    .stat-number {
+      background: linear-gradient(135deg, #c8d8ff 0%, #7aa0ff 50%, #305CDE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: filter 0.3s ease;
+    }
+    .stat-number-hover {
+      filter: drop-shadow(0 0 10px rgba(122, 160, 255, 0.5));
+    }
+    /* ─── Hero title royal gradient ──────────────────── */
+    .hero-title-gradient {
+      background: linear-gradient(
+        130deg,
+        #ffffff  0%,
+        #c8d8ff 30%,
+        #7aa0ff 60%,
+        #ffffff 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s linear infinite;
+    }
+  </style>
+</head>
+
+<body x-data="galleryApp()" @keydown.escape.window="closeModal()"
+  @keydown.arrow-right.window="if(isModalOpen) nextProject()" @keydown.arrow-left.window="if(isModalOpen) prevProject()"
+  class="bg-brand-bg text-gray-100 font-sans antialiased min-h-screen selection:bg-brand-accent selection:text-white">
+
+  <!-- ── Ambient FX Layer ─────────────────────────────────── -->
+  <div class="noise-overlay"></div>
+  <div class="scan-line"></div>
+
+  <!-- ── Canvas Background Particles ─────────────────────── -->
+  <canvas id="particleCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+  <!-- ═══════════════════════════════════════════════════════
+       NAVIGATION HEADER
+  ═══════════════════════════════════════════════════════ -->
+  <header x-data="{ scrolled: false, mobileMenuOpen: false }" @scroll.window="scrolled = (window.pageYOffset > 30)"
+    :class="scrolled
+      ? 'bg-brand-dark/98 backdrop-blur-md border-b border-brand-border/80 py-3 shadow-glow'
+      : 'bg-gradient-to-b from-brand-dark/90 to-transparent py-5'"
+    class="fixed top-0 left-0 right-0 z-40 transition-all duration-500">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center space-x-3 group">
+        <div class="relative">
+          <div
+            class="w-8 h-8 bg-brand-accent rounded-lg flex items-center justify-center shadow-glow group-hover:shadow-glow-lg transition-shadow duration-300">
+            <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24">
+              <path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 3l3-3 3 3-3 3z" />
+            </svg>
+          </div>
+          <div
+            class="absolute -inset-1 bg-brand-accent/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm">
+          </div>
+        </div>
+        <span class="font-display font-extrabold text-xl tracking-wider text-white">
+          NET<span class="text-brand-accentLight">FLIC</span>
+        </span>
+      </a>
+
+      <!-- Desktop Controls -->
+      <div class="hidden md:flex items-center space-x-4">
+
+        <div
+          class="flex items-center space-x-2 text-xs text-brand-muted bg-brand-surface/60 px-3 py-1.5 rounded-full border border-brand-border/60">
+          <span>Showing - <strong class="text-white" x-text="filteredProjects.length"></strong> Works</span>
+        </div>
+
+        <!-- Search -->
+        <div class="relative">
+          <svg class="w-4 h-4 text-brand-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input type="text" id="searchInput" x-model="searchQuery" placeholder="Search works, clients, techniques…"
+            class="bg-brand-surface/80 border border-brand-border focus:border-brand-accent text-sm text-white placeholder-brand-muted rounded-full pl-9 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-brand-accent/30 transition-all duration-300 w-52 focus:w-72">
+          <button x-show="searchQuery.length > 0" @click="searchQuery = ''"
+            x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-75"
+            x-transition:enter-end="opacity-100 scale-100"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-white transition-colors">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button @click="mobileMenuOpen = !mobileMenuOpen"
+        class="md:hidden w-9 h-9 rounded-lg bg-brand-surface border border-brand-border flex flex-col items-center justify-center space-y-1.5 transition-all">
+        <span :class="mobileMenuOpen ? 'rotate-45 translate-y-2' : ''"
+          class="block w-4 h-0.5 bg-white transition-all duration-300"></span>
+        <span :class="mobileMenuOpen ? 'opacity-0' : ''"
+          class="block w-4 h-0.5 bg-white transition-all duration-300"></span>
+        <span :class="mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''"
+          class="block w-4 h-0.5 bg-white transition-all duration-300"></span>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="md:hidden bg-brand-dark/98 border-b border-brand-border px-4 pb-4 pt-2 space-y-3">
+      <input type="text" x-model="searchQuery" placeholder="Search works…"
+        class="w-full bg-brand-surface border border-brand-border text-sm text-white placeholder-brand-muted rounded-lg px-4 py-2 focus:outline-none focus:border-brand-accent">
+      <div class="flex flex-wrap gap-2">
+        <template x-for="cat in categories" :key="cat.id">
+          <button @click="setCategory(cat.id); mobileMenuOpen=false"
+            :class="activeCategory === cat.id ? 'bg-brand-accent text-white border-brand-accent' : 'text-gray-400 bg-brand-surface border-brand-border hover:border-brand-accent/50'"
+            class="px-3 py-1 rounded-full text-xs font-medium border transition-all duration-200"
+            x-text="cat.name"></button>
+        </template>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <section class="relative pt-28 pb-16 lg:pt-40 lg:pb-24 hero-mesh overflow-hidden">
+
+    <!-- Floating orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <!-- Grid lines overlay -->
+    <div class="absolute inset-0 opacity-[0.04] pointer-events-none"
+      style="background-image: linear-gradient(rgba(122,160,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(122,160,255,1) 1px, transparent 1px); background-size: 60px 60px;">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <template x-if="featuredProject">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+
+          <!-- Hero Text -->
+          <div class="lg:col-span-7 space-y-6">
+            <!-- Tag badge -->
+            <div
+              class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accentLight text-xs font-semibold tracking-widest uppercase"
+              x-transition:enter="transition ease-out duration-500 delay-100"
+              x-transition:enter-start="opacity-0 -translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+              <span class="relative flex h-2 w-2">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
+              </span>
+              <span>Featured Showcase</span>
+            </div>
+
+            <h1 class="text-5xl sm:text-7xl font-royal font-light text-white tracking-wide leading-[1.05] hero-title-gradient"
+              x-text="featuredProject.title"></h1>
+
+            <!-- Tags row -->
+            <div class="flex flex-wrap gap-2">
+              <template x-for="g in featuredProject.genres" :key="g">
+                <span
+                  class="tag-blue px-3 py-1 bg-brand-accent/15 text-brand-accentLight border border-brand-accent/25 rounded-full text-xs font-semibold cursor-pointer"
+                  x-text="g"></span>
+              </template>
+              <template x-for="t in featuredProject.techniques.slice(0,3)" :key="t">
+                <span
+                  class="tag-blue px-3 py-1 bg-brand-surface/80 text-gray-300 border border-brand-border rounded-full text-xs font-medium cursor-pointer"
+                  x-text="t"></span>
+              </template>
+            </div>
+
+            <p class="text-gray-300/90 text-base sm:text-lg leading-relaxed max-w-xl" x-text="featuredProject.synopsis">
+            </p>
+
+            <!-- Meta row -->
+            <div class="flex items-center space-x-6 text-xs text-brand-muted font-mono">
+              <span class="flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span x-text="featuredProject.client"></span>
+              </span>
+              <span class="flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span x-text="featuredProject.year"></span>
+              </span>
+              <span class="flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span x-text="featuredProject.duration"></span>
+              </span>
+            </div>
+
+            <!-- CTAs -->
+            <div class="flex flex-wrap items-center gap-4">
+              <button @click="openModal(featuredProject)"
+                class="animated-border group relative inline-flex items-center space-x-2 bg-brand-accent hover:bg-brand-accentHover text-white px-7 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 shadow-glow hover:shadow-glow-lg hover:-translate-y-0.5 active:translate-y-0">
+                <svg class="w-5 h-5 fill-current transform group-hover:scale-110 transition-transform"
+                  viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                <span>Play Trailer</span>
+              </button>
+
+              <button @click="openModal(featuredProject)"
+                class="inline-flex items-center space-x-2 bg-brand-surface/80 hover:bg-brand-card text-gray-200 border border-brand-border hover:border-brand-accent/60 px-5 py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5">
+                <svg class="w-4 h-4 text-brand-accentLight" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span>View Tech Specs</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hero Video Card -->
+          <div class="lg:col-span-5 relative group cursor-pointer" @click="openModal(featuredProject)">
+            <!-- Glow behind card -->
+            <div
+              class="absolute -inset-4 bg-brand-accent/10 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+            </div>
+
+            <div
+              class="relative aspect-video rounded-2xl overflow-hidden border border-brand-border/60 group-hover:border-brand-accent/70 transition-all duration-500 shadow-2xl">
+              <img :src="featuredProject.poster" :alt="featuredProject.title"
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+
+              <!-- Gradient overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent opacity-70">
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-r from-brand-dark/50 to-transparent opacity-40"></div>
+
+              <!-- Play button -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="relative">
+                  <div
+                    class="absolute -inset-3 bg-brand-accent/20 rounded-full animate-ping opacity-0 group-hover:opacity-100">
+                  </div>
+                  <div
+                    class="w-18 h-18 w-16 h-16 rounded-full bg-brand-accent/90 backdrop-blur-sm text-white flex items-center justify-center shadow-glow-lg transform group-hover:scale-110 transition-all duration-400 border border-brand-accentLight/30">
+                    <svg class="w-7 h-7 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Badges -->
+              <div
+                class="absolute top-3 left-3 bg-brand-dark/90 border border-brand-border px-2.5 py-1 rounded-lg text-xs font-display font-semibold text-brand-accentLight">
+                4K HDR // 60FPS
+              </div>
+              <div
+                class="absolute bottom-3 right-3 bg-black/80 text-gray-200 px-2 py-0.5 rounded text-xs font-mono border border-brand-border/40">
+                <span x-text="featuredProject.duration"></span>
+              </div>
+              <div
+                class="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xs text-brand-accentLight font-semibold">
+                Click to open →
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </template>
+    </div>
+  </section>
+
+  <!-- Section divider -->
+  <div class="section-divider"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       OBRA MAESTRA + STATS SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <section class="stats-section py-10 relative overflow-hidden" x-data="statsSection()">
+
+    <!-- ── Obra Maestra del Arte Heading ───────────────── -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <p class="text-[11px] font-display font-semibold tracking-[0.35em] uppercase text-brand-muted mb-3">Cinematic Portfolio</p>
+      <h2 class="obra-maestra group inline-block cursor-default select-none">
+        <span class="obra-text">Obra Maestra</span>
+        <em class="obra-italic"> del Arte</em>
+      </h2>
+    </div>
+  </section>
+
+  <!-- Section divider -->
+  <div class="section-divider"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       GALLERY SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <main class="gallery-section relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+
+      <!-- Filter Bar -->
+      <div
+        class="sticky top-16 z-30 bg-brand-dark/95 backdrop-blur-md border border-brand-border/60 rounded-2xl px-5 py-3 shadow-inner-glow transition-all duration-300">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+          <!-- Category tabs -->
+          <div class="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+            <template x-for="cat in categories" :key="cat.id">
+              <button @click="setCategory(cat.id)" :class="activeCategory === cat.id
+                  ? 'text-white bg-brand-accent shadow-glow-sm'
+                  : 'text-brand-muted hover:text-white hover:bg-brand-surface/60'"
+                class="relative px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-250 font-display">
+                <span x-text="cat.name"></span>
+                <!-- Count badge -->
+                <span x-show="activeCategory === cat.id" x-transition:enter="transition ease-out duration-200"
+                  x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100"
+                  class="ml-2 inline-flex items-center justify-center w-5 h-5 text-[10px] bg-white/20 rounded-full font-bold"
+                  x-text="filteredProjects.length"></span>
+              </button>
+            </template>
+          </div>
+
+          <!-- Technique dropdown + view toggle -->
+          <div class="flex items-center space-x-3 flex-shrink-0">
+            <select x-model="selectedTechnique"
+              class="bg-brand-surface border border-brand-border text-xs text-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-accent cursor-pointer transition-colors hover:border-brand-accent/50">
+              <option value="all">All Techniques</option>
+              <template x-for="tech in allTechniques" :key="tech">
+                <option :value="tech" x-text="tech"></option>
+              </template>
+            </select>
+
+            <!-- Grid / List toggle -->
+            <div class="flex items-center bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
+              <button @click="viewMode = 'grid'"
+                :class="viewMode === 'grid' ? 'bg-brand-accent text-white' : 'text-brand-muted hover:text-white'"
+                class="px-3 py-2 transition-all duration-200" title="Grid View">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </button>
+              <button @click="viewMode = 'list'"
+                :class="viewMode === 'list' ? 'bg-brand-accent text-white' : 'text-brand-muted hover:text-white'"
+                class="px-3 py-2 transition-all duration-200" title="List View">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active search indicator -->
+        <div x-show="searchQuery.length > 0" x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          class="mt-2 pt-2 border-t border-brand-border/40 flex items-center justify-between text-xs">
+          <span class="text-brand-muted">Searching: <strong class="text-brand-accentLight"
+              x-text="'&quot;' + searchQuery + '&quot;'"></strong></span>
+          <button @click="searchQuery = ''"
+            class="text-brand-muted hover:text-brand-accentLight transition-colors flex items-center space-x-1">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+            <span>Clear search</span>
+          </button>
+        </div>
+      </div>
+
+
+      <!-- Empty State -->
+      <div x-show="filteredProjects.length === 0" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+        class="py-24 text-center space-y-5 bg-brand-surface/20 rounded-2xl border border-brand-border/30">
+        <div
+          class="w-20 h-20 mx-auto rounded-2xl bg-brand-surface border border-brand-border flex items-center justify-center text-brand-muted">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-display font-bold text-white">No Matching Works Found</h3>
+        <p class="text-sm text-gray-400 max-w-sm mx-auto">Try adjusting your search query or selecting a different
+          category.</p>
+        <button @click="resetFilters()"
+          class="inline-flex items-center space-x-2 px-5 py-2.5 bg-brand-accent text-white text-sm font-semibold rounded-xl hover:bg-brand-accentHover hover:shadow-glow transition-all duration-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>Reset All Filters</span>
+        </button>
+      </div>
+
+
+      <!-- ─── GRID VIEW ───────────────────────────────── -->
+      <div x-show="filteredProjects.length > 0 && viewMode === 'grid'"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="cardGrid">
+
+        <template x-for="(project, index) in filteredProjects" :key="project.id">
+          <div @click="openModal(project)" @mouseenter="hoverCard = project.id" @mouseleave="hoverCard = null"
+            @mousemove="updateSpotlight($event, $el)" x-transition:enter="transition ease-out duration-400"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            class="card-spotlight-wrapper relative group bg-brand-card hover:bg-brand-cardHover border border-brand-border/80 hover:border-brand-accent/60 rounded-2xl overflow-hidden cursor-pointer transition-all duration-350 hover:shadow-glow hover:-translate-y-1 flex flex-col"
+            :style="`transition-delay: ${index * 40}ms`">
+
+            <!-- Spotlight overlay -->
+            <div class="card-spotlight"></div>
+
+            <!-- Poster -->
+            <div class="relative aspect-video overflow-hidden bg-brand-surface flex-shrink-0">
+              <img :src="project.poster" :alt="project.title"
+                class="w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-600 group-hover:brightness-90"
+                style="transform-origin: center" loading="lazy">
+
+              <!-- Gradient -->
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-brand-card via-brand-card/10 to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-300">
+              </div>
+
+              <!-- Play overlay -->
+              <div
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                <div class="relative">
+                  <div class="absolute -inset-2 bg-brand-accent/30 rounded-full blur-md animate-pulse-ring"></div>
+                  <div
+                    class="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center shadow-glow transform group-hover:scale-110 transition-transform z-10 relative">
+                    <svg class="w-5 h-5 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Category badge -->
+              <div class="absolute top-2.5 left-2.5 z-10">
+                <span
+                  class="px-2 py-0.5 bg-brand-dark/90 border border-brand-border text-[10px] font-display font-semibold tracking-widest uppercase text-brand-accentLight rounded-lg">
+                  <span x-text="getCategoryName(project.category)"></span>
+                </span>
+              </div>
+
+              <!-- Duration badge -->
+              <div
+                class="absolute bottom-2.5 right-2.5 bg-black/80 text-white px-2 py-0.5 rounded text-[11px] font-mono border border-brand-border/30">
+                <span x-text="project.duration"></span>
+              </div>
+
+              <!-- Progress bar (on hover) -->
+              <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-border/40">
+                <div class="progress-bar" :style="`width: ${hoverCard === project.id ? '100%' : '0%'}`"
+                  style="transition: width 0.6s ease; transition-delay: 0.1s;"></div>
+              </div>
+            </div>
+
+            <!-- Card body -->
+            <div class="p-4 space-y-3 flex-1 flex flex-col">
+              <div>
+                <h4
+                  class="font-display font-bold text-white text-sm group-hover:text-brand-accentLight transition-colors duration-200 line-clamp-1 leading-snug"
+                  x-text="project.title"></h4>
+                <p class="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed" x-text="project.synopsis"></p>
+              </div>
+
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-1 pt-1">
+                <template x-for="g in project.genres.slice(0, 2)" :key="g">
+                  <span
+                    class="tag-blue px-2 py-0.5 bg-brand-accent/12 text-brand-accentLight border border-brand-accent/20 rounded-md text-[10px] font-medium"
+                    x-text="g"></span>
+                </template>
+                <template x-for="t in project.techniques.slice(0, 1)" :key="t">
+                  <span
+                    class="tag-blue px-2 py-0.5 bg-brand-surface text-gray-400 border border-brand-border/60 rounded-md text-[10px] font-medium"
+                    x-text="t"></span>
+                </template>
+              </div>
+
+              <!-- Footer -->
+              <div
+                class="flex items-center justify-between text-[11px] text-brand-muted pt-2 border-t border-brand-border/40 mt-auto">
+                <span class="truncate max-w-[130px] font-medium" x-text="project.client"></span>
+                <span class="font-mono" x-text="project.year"></span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+
+      <!-- ─── LIST VIEW ───────────────────────────────── -->
+      <div x-show="filteredProjects.length > 0 && viewMode === 'list'" class="space-y-3">
+        <template x-for="(project, index) in filteredProjects" :key="project.id">
+          <div @click="openModal(project)" @mouseenter="hoverCard = project.id" @mouseleave="hoverCard = null"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-x-4"
+            x-transition:enter-end="opacity-100 translate-x-0" :style="`transition-delay: ${index * 50}ms`"
+            class="group flex items-center space-x-4 bg-brand-card hover:bg-brand-cardHover border border-brand-border/80 hover:border-brand-accent/60 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-glow p-3">
+
+            <!-- Thumbnail -->
+            <div class="relative w-32 h-20 flex-shrink-0 rounded-xl overflow-hidden">
+              <img :src="project.poster" :alt="project.title"
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-400"
+                loading="lazy">
+              <div
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-brand-dark/50">
+                <svg class="w-6 h-6 fill-white" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center space-x-2 mb-0.5">
+                <span class="text-[10px] font-display font-bold tracking-widest text-brand-accentLight uppercase"
+                  x-text="getCategoryName(project.category)"></span>
+                <span class="text-brand-border">·</span>
+                <span class="text-[10px] text-brand-muted font-mono" x-text="project.year"></span>
+              </div>
+              <h4
+                class="font-display font-bold text-white text-sm group-hover:text-brand-accentLight transition-colors truncate"
+                x-text="project.title"></h4>
+              <p class="text-xs text-gray-500 line-clamp-1 mt-0.5" x-text="project.synopsis"></p>
+            </div>
+
+            <!-- Tags (desktop) -->
+            <div class="hidden lg:flex items-center space-x-1.5 flex-shrink-0">
+              <template x-for="g in project.genres.slice(0, 2)" :key="g">
+                <span
+                  class="px-2 py-0.5 bg-brand-accent/15 text-brand-accentLight border border-brand-accent/25 rounded-md text-[10px] font-medium"
+                  x-text="g"></span>
+              </template>
+            </div>
+
+            <!-- Duration + arrow -->
+            <div class="flex items-center space-x-3 flex-shrink-0">
+              <span class="text-xs font-mono text-brand-muted" x-text="project.duration"></span>
+              <svg
+                class="w-5 h-5 text-brand-border group-hover:text-brand-accent group-hover:translate-x-1 transition-all duration-200"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </template>
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- Section divider -->
+  <div class="section-divider"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════════════ -->
+  <footer class="relative bg-brand-dark border-t border-brand-border/40 py-14 overflow-hidden">
+    <div class="orb orb-2" style="opacity:0.3; bottom: -50px; right: -100px;"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+
+        <!-- Branding -->
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-brand-accent rounded-lg flex items-center justify-center shadow-glow">
+            <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24">
+              <path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 3l3-3 3 3-3 3z" />
+            </svg>
+          </div>
+          <span class="font-display font-extrabold text-lg tracking-wider text-white">NET<span
+              class="text-brand-accentLight">FLIC</span></span>
+        </div>
+
+        <!-- Keyboard shortcuts hint -->
+        <div class="flex items-center space-x-4 text-xs text-brand-muted">
+          <span class="flex items-center space-x-1.5"><kbd>ESC</kbd><span>Close Modal</span></span>
+          <span class="flex items-center space-x-1.5"><kbd>←</kbd><kbd>→</kbd><span>Navigate</span></span>
+        </div>
+
+        <p class="text-xs text-brand-muted/70 font-mono">© 2026 NETFLIC — All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL (TABBED LAYOUT)
+  ═══════════════════════════════════════════════════════ -->
+  <div x-show="isModalOpen" x-cloak
+    class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6 lg:p-10" role="dialog"
+    aria-modal="true" aria-labelledby="modalTitle">
+
+    <!-- Backdrop -->
+    <div x-show="isModalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="closeModal()"
+      class="fixed inset-0 bg-black/93 backdrop-blur-sm"></div>
+
+    <!-- Modal window -->
+    <div x-show="isModalOpen" x-transition:enter="transition ease-out duration-350 transform"
+      x-transition:enter-start="opacity-0 scale-90 translate-y-8"
+      x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-200 transform"
+      x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+      x-transition:leave-end="opacity-0 scale-90 translate-y-6"
+      class="relative w-full max-w-5xl bg-brand-card border border-brand-border/80 rounded-2xl overflow-hidden shadow-glow-xl z-10 my-auto">
+
+      <!-- Progress indicator at top -->
+      <div class="absolute top-0 left-0 right-0 h-0.5 bg-brand-border/40 z-20">
+        <div class="progress-bar"
+          :style="`width: ${currentIndex !== null && filteredProjects.length ? ((currentIndex + 1) / filteredProjects.length * 100) : 0}%`">
+        </div>
+      </div>
+
+      <!-- Close -->
+      <button @click="closeModal()"
+        class="absolute top-4 right-4 z-20 w-10 h-10 rounded-xl bg-brand-surface/90 hover:bg-brand-accent border border-brand-border hover:border-brand-accent text-white flex items-center justify-center transition-all duration-200 group shadow-md"
+        title="Close (ESC)">
+        <svg class="w-5 h-5 transform group-hover:rotate-90 transition-transform duration-300" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Video player -->
+      <div class="relative aspect-video bg-black overflow-hidden">
+        <template x-if="currentProject">
+          <video id="modalVideoPlayer" class="w-full h-full object-contain" controls autoplay playsinline
+            :poster="currentProject.poster" :src="currentProject.videoUrl">
+            Your browser does not support HTML5 video.
+          </video>
+        </template>
+
+        <!-- Prev / Next -->
+        <button @click.stop="prevProject()"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-brand-dark/80 hover:bg-brand-accent text-white flex items-center justify-center border border-brand-border hover:border-brand-accent transition-all duration-200 group"
+          title="Previous (←)">
+          <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button @click.stop="nextProject()"
+          class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-brand-dark/80 hover:bg-brand-accent text-white flex items-center justify-center border border-brand-border hover:border-brand-accent transition-all duration-200 group"
+          title="Next (→)">
+          <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal body — tabbed -->
+      <template x-if="currentProject">
+        <div class="p-5 sm:p-7 space-y-5 max-h-[52vh] overflow-y-auto">
+
+          <!-- Title row -->
+          <div class="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-brand-border/50">
+            <div class="space-y-2 flex-1 min-w-0">
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-display font-bold tracking-widest uppercase text-brand-accentLight"
+                  x-text="getCategoryName(currentProject.category)"></span>
+                <span class="text-brand-border text-xs">·</span>
+                <span class="text-[10px] text-brand-muted font-mono" x-text="'Year ' + currentProject.year"></span>
+                <span class="text-brand-border text-xs">·</span>
+                <span class="text-[10px] text-brand-muted font-mono" x-text="currentProject.duration"></span>
+              </div>
+              <h2 id="modalTitle"
+                class="text-2xl sm:text-3xl font-display font-extrabold text-white tracking-tight leading-tight"
+                x-text="currentProject.title"></h2>
+            </div>
+            <!-- Nav count -->
+            <span
+              class="flex-shrink-0 text-sm text-brand-muted font-mono bg-brand-surface/50 border border-brand-border px-3 py-1 rounded-lg">
+              <span x-text="currentIndex + 1"></span> / <span x-text="filteredProjects.length"></span>
+            </span>
+          </div>
+
+          <!-- Tags -->
+          <div class="flex flex-wrap gap-2">
+            <template x-for="genre in currentProject.genres" :key="genre">
+              <span
+                class="tag-blue px-3 py-1 bg-brand-accent/15 text-brand-accentLight border border-brand-accent/30 rounded-full text-xs font-semibold cursor-pointer"
+                x-text="genre"></span>
+            </template>
+            <template x-for="tech in currentProject.techniques" :key="tech">
+              <span
+                class="tag-blue px-3 py-1 bg-brand-surface text-gray-300 border border-brand-border rounded-full text-xs font-medium cursor-pointer"
+                x-text="tech"></span>
+            </template>
+          </div>
+
+          <!-- Tabs -->
+          <div class="border-b border-brand-border/50">
+            <div class="flex space-x-6">
+              <button @click="modalTab = 'overview'"
+                :class="modalTab === 'overview' ? 'modal-tab active' : 'modal-tab text-brand-muted hover:text-white'"
+                class="pb-3 text-sm font-semibold font-display transition-colors duration-200">
+                Overview
+              </button>
+              <button @click="modalTab = 'specs'"
+                :class="modalTab === 'specs' ? 'modal-tab active' : 'modal-tab text-brand-muted hover:text-white'"
+                class="pb-3 text-sm font-semibold font-display transition-colors duration-200">
+                Tech Specs
+              </button>
+              <button @click="modalTab = 'highlights'"
+                :class="modalTab === 'highlights' ? 'modal-tab active' : 'modal-tab text-brand-muted hover:text-white'"
+                class="pb-3 text-sm font-semibold font-display transition-colors duration-200">
+                Highlights
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab: Overview -->
+          <div x-show="modalTab === 'overview'" x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            <p class="text-gray-300 text-sm leading-relaxed" x-text="currentProject.description"></p>
+            <div class="mt-4 flex items-center space-x-4 text-sm text-brand-muted">
+              <span>Director: <strong class="text-white" x-text="currentProject.director"></strong></span>
+              <span>·</span>
+              <span>Client: <strong class="text-white" x-text="currentProject.client"></strong></span>
+            </div>
+          </div>
+
+          <!-- Tab: Tech Specs -->
+          <div x-show="modalTab === 'specs'" x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <template x-for="[label, val] in Object.entries({
+                'Client':          currentProject.client,
+                'Director / Lead': currentProject.director,
+                'Resolution':      currentProject.format,
+                'Audio':           currentProject.audio
+              })" :key="label">
+                <div class="bg-brand-surface/50 border border-brand-border/60 rounded-xl p-3.5">
+                  <div class="text-[10px] uppercase tracking-widest text-brand-muted mb-1 font-display font-semibold"
+                    x-text="label"></div>
+                  <div class="text-sm text-white font-medium leading-snug" x-text="val"></div>
+                </div>
+              </template>
+              <div class="sm:col-span-2 bg-brand-surface/50 border border-brand-border/60 rounded-xl p-3.5">
+                <div class="text-[10px] uppercase tracking-widest text-brand-muted mb-1.5 font-display font-semibold">
+                  Software Tools</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <template x-for="s in currentProject.software" :key="s">
+                    <span
+                      class="px-2.5 py-1 bg-brand-card border border-brand-border text-gray-300 rounded-lg text-xs font-mono"
+                      x-text="s"></span>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Highlights -->
+          <div x-show="modalTab === 'highlights'" x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+            <ul class="space-y-3">
+              <template x-for="(highlight, idx) in currentProject.highlights" :key="highlight">
+                <li class="flex items-start space-x-3">
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-brand-accent/20 border border-brand-accent/30 flex items-center justify-center">
+                    <span class="text-[10px] text-brand-accentLight font-bold font-display" x-text="idx + 1"></span>
+                  </div>
+                  <p class="text-sm text-gray-300 leading-relaxed pt-0.5" x-text="highlight"></p>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <!-- Footer -->
+          <div class="pt-3 border-t border-brand-border/40 flex items-center justify-between text-xs text-brand-muted">
+            <span class="flex items-center space-x-2">
+              <kbd>←</kbd><kbd>→</kbd>
+              <span>Navigate projects</span>
+            </span>
+            <span class="flex items-center space-x-1">
+              <kbd>ESC</kbd><span>Close</span>
+            </span>
+          </div>
+
+        </div>
+      </template>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       ALPINE JS
+  ═══════════════════════════════════════════════════════ -->
+  <script>
+    /* ── Main gallery app ────────────────────────────────── */
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('galleryApp', () => ({
+        activeCategory: 'all',
+        selectedTechnique: 'all',
+        searchQuery: '',
+        isModalOpen: false,
+        currentProject: null,
+        currentIndex: 0,
+        hoverCard: null,
+        viewMode: 'grid',
+        modalTab: 'overview',
+
+        categories: [
+          { id: 'all', name: 'All Works' },
+          { id: 'vfx', name: 'VFX & Motion' },
+          { id: 'commercials', name: 'Commercials' },
+          { id: 'documentaries', name: 'Documentaries' },
+          { id: 'shortfilms', name: 'Short Films' }
+        ],
+
+        projects: [
+          {
+            id: 1,
+            title: "CYBERPUNK NEON — METROPOLIS 2099",
+            category: "vfx",
+            client: "Aetheria Interactive",
+            year: 2026,
+            duration: "02:45",
+            poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+            genres: ["Sci-Fi", "Cyberpunk", "Cinematic"],
+            techniques: ["Unreal Engine 5", "Octane Render", "3D Motion Tracking", "DaVinci Color"],
+            synopsis: "A photorealistic futuristic cityscape featuring volumetric atmospheric lighting and dynamic vehicle simulations.",
+            description: "This project showcases full CG environment construction inside Unreal Engine 5 using custom shader pipelines and Ray Tracing Path Tracer. Motion capture tracking was integrated with live action actors shot against green screen with precise keying and edge refinement.",
+            highlights: [
+              "Over 45 complex composite layers rendered in 32-bit float OpenEXR",
+              "Custom procedural fog shaders and neon glow dispersion optics",
+              "Integrated spatial Dolby Atmos sound design and original cyber-synth score"
+            ],
+            director: "Marcus Vance",
+            software: ["Unreal Engine 5", "Nuke X", "Cinema 4D", "DaVinci Resolve"],
+            format: "3840×2160 UHD // 60 FPS // ProRes 4444 XQ",
+            audio: "5.1 Surround & Spatial Audio Track"
+          },
+          {
+            id: 2,
+            title: "AURA RENEWABLE — GLOBAL BRAND ANTHEM",
+            category: "commercials",
+            client: "Aura Energy Global",
+            year: 2025,
+            duration: "01:30",
+            poster: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1200&auto=format&fit=crop",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            genres: ["Commercial", "Corporate", "High Tech"],
+            techniques: ["8K Cinema Camera", "FPV Drone Cinematography", "HDR Color Grading"],
+            synopsis: "An energetic global commercial spot highlighting next-generation wind and solar clean technology across three continents.",
+            description: "Filmed on location in Iceland, Spain, and California using custom FPV racing drones equipped with RED V-Raptor 8K cameras. The color grade emphasizes high contrast, crisp highlights, and deep obsidian ocean blues.",
+            highlights: [
+              "Extreme high-speed FPV drone proximity passes over offshore wind turbines",
+              "Seamless match-cuts between macro clean-tech circuits and sweeping landscapes",
+              "Multi-language voiceover recording and global broadcasting spec delivery"
+            ],
+            director: "Elena Rostova",
+            software: ["RED CINE-X", "Premiere Pro", "DaVinci Resolve Studio"],
+            format: "4096×2160 DCI 4K // 24 FPS // Arri RAW",
+            audio: "Stereo & Broadcast Master (-24 LKFS)"
+          },
+          {
+            id: 3,
+            title: "DEEP SKY — NEBULA DOCUMENTARY TEASER",
+            category: "documentaries",
+            client: "Starlight Science Network",
+            year: 2026,
+            duration: "03:12",
+            poster: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1200&auto=format&fit=crop",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            genres: ["Documentary", "Astronomy", "Nature"],
+            techniques: ["Astro Time-lapse", "Macro Optics", "Anamorphic Lenses", "Sub-bass Mastering"],
+            synopsis: "A mesmerizing teaser exploring deep space imagery via advanced orbital telescopes and macro fluid particle simulations.",
+            description: "Combining real Hubble and James Webb Telescope optical data with macro physical liquid fluid dynamics filmed at 1000 frames per second on the Phantom Flex 4K camera.",
+            highlights: [
+              "Microscopic ferrofluid magnetic motion captured in 4K macro resolution",
+              "Custom anamorphic flare rendering tuned to match vintage Kowas lens characteristics",
+              "Narrated by award-winning science communicators"
+            ],
+            director: "Julian Thorne",
+            software: ["Houdini FX", "After Effects", "Pro Tools HD"],
+            format: "3840×2160 UHD // 23.976 FPS // 2.39:1 Anamorphic",
+            audio: "Dolby Atmos 7.1.4 Mix"
+          },
+          {
+            id: 4,
+            title: "SHADOW PULSE — NOIR ACTION SHORT",
+            category: "shortfilms",
+            client: "Vanguard Independent Pictures",
+            year: 2025,
+            duration: "04:10",
+            poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1200&auto=format&fit=crop",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            genres: ["Short Film", "Action", "Neo Noir"],
+            techniques: ["Low Light Cinematography", "Practical VFX", "Custom Sound Design", "Stunt Choreography"],
+            synopsis: "A suspenseful rain-drenched pursuit through neon alleyways, blending practical pyrotechnics with high-speed cameras.",
+            description: "Shot exclusively at night utilizing Sony FX9 Dual Native ISO sensors to capture natural low light textures without noise. Features custom color space transforms designed for high contrast dark blue shadow tones.",
+            highlights: [
+              "Choreographed single-take action sequence lasting 180 seconds",
+              "Real rain machine setups with practical interactive lighting rigs",
+              "Nominated for Best Cinematography at 2025 Indie Film Showcase"
+            ],
+            director: "Kenji Sato",
+            software: ["DaVinci Resolve", "Avid Media Composer", "iZotope RX"],
+            format: "4096×2160 DCI 4K // 24 FPS // Apple ProRes 422 HQ",
+            audio: "Uncompressed Linear PCM 24-bit"
+          },
+          {
+            id: 5,
+            title: "HYPERDRIVE EV — AUTOMOTIVE REVEAL",
+            category: "commercials",
+            client: "Apex Motors",
+            year: 2026,
+            duration: "01:15",
+            poster: "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            genres: ["Commercial", "Automotive", "3D Animation"],
+            techniques: ["Houdini Pyro Simulation", "Raytracing", "CGI Vehicle Rigging", "Motion Control Arm"],
+            synopsis: "Sleek launch reveal for an electric hypercar highlighting aerodynamic airflow lines via laser volumetric graphics.",
+            description: "Full CAD model cleanup and animation. Aerodynamic smoke and air pressure simulations crafted in Houdini and composite-rendered using V-Ray.",
+            highlights: [
+              "Sub-millimeter accurate CAD vehicle surface reconstruction",
+              "Volumetric airflow velocity field particle simulation",
+              "Custom sound synthesis of high-frequency electric motor whines"
+            ],
+            director: "Sarah Jenkins",
+            software: ["Houdini", "Maya", "V-Ray", "Nuke Studio"],
+            format: "3840×2160 UHD // 60 FPS // OpenEXR",
+            audio: "Custom 3D Spatial Audio"
+          },
+          {
+            id: 6,
+            title: "ECHOES OF ETERNITY — ABSTRACT VISUALS",
+            category: "vfx",
+            client: "Komorebi Arts Foundation",
+            year: 2025,
+            duration: "02:00",
+            poster: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+            genres: ["VFX", "Experimental", "Motion Design"],
+            techniques: ["Procedural Geometry", "Glitch Processing", "Generative Shader Art"],
+            synopsis: "An experimental visual artwork exploring geometric distortion, particle dispersal, and reactive audio visualizer waves.",
+            description: "Created using GLSL shaders and TouchDesigner generative algorithms driven by real-time audio stem analysis. Resulted in organic yet mechanical liquid crystal motion.",
+            highlights: [
+              "Real-time audio-reactive procedural geometry deformations",
+              "Displayed at 4K LED volume exhibition in Tokyo",
+              "Custom vector displacement maps rendering 10M+ active points"
+            ],
+            director: "David K. Chen",
+            software: ["TouchDesigner", "Blender", "After Effects"],
+            format: "3840×2160 UHD // 60 FPS // ProRes 4444",
+            audio: "Binaural High-Res Audio"
+          }
+        ],
+
+        get featuredProject() {
+          return this.projects[0];
+        },
+
+        get allTechniques() {
+          const techs = new Set();
+          this.projects.forEach(p => p.techniques.forEach(t => techs.add(t)));
+          return Array.from(techs).sort();
+        },
+
+        get filteredProjects() {
+          return this.projects.filter(p => {
+            const matchCat = this.activeCategory === 'all' || p.category === this.activeCategory;
+            const matchTech = this.selectedTechnique === 'all' || p.techniques.includes(this.selectedTechnique);
+            const q = this.searchQuery.toLowerCase().trim();
+            const matchSearch = !q ||
+              p.title.toLowerCase().includes(q) ||
+              p.client.toLowerCase().includes(q) ||
+              p.synopsis.toLowerCase().includes(q) ||
+              p.genres.some(g => g.toLowerCase().includes(q)) ||
+              p.techniques.some(t => t.toLowerCase().includes(q));
+            return matchCat && matchTech && matchSearch;
+          });
+        },
+
+        setCategory(catId) { this.activeCategory = catId; },
+
+        getCategoryName(catId) {
+          const found = this.categories.find(c => c.id === catId);
+          return found ? found.name : catId;
+        },
+
+        resetFilters() {
+          this.activeCategory = 'all';
+          this.selectedTechnique = 'all';
+          this.searchQuery = '';
+        },
+
+        updateSpotlight(event, el) {
+          const rect = el.getBoundingClientRect();
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          el.style.setProperty('--mouse-x', x + 'px');
+          el.style.setProperty('--mouse-y', y + 'px');
+        },
+
+        openModal(project) {
+          this.currentProject = project;
+          this.modalTab = 'overview';
+          const list = this.filteredProjects.length > 0 ? this.filteredProjects : this.projects;
+          this.currentIndex = list.findIndex(p => p.id === project.id);
+          this.isModalOpen = true;
+          document.body.style.overflow = 'hidden';
+          this.$nextTick(() => {
+            const vid = document.getElementById('modalVideoPlayer');
+            if (vid) { vid.currentTime = 0; vid.play().catch(() => { }); }
+          });
+        },
+
+        closeModal() {
+          if (!this.isModalOpen) return;
+          const vid = document.getElementById('modalVideoPlayer');
+          if (vid) vid.pause();
+          this.isModalOpen = false;
+          document.body.style.overflow = 'auto';
+        },
+
+        nextProject() {
+          const list = this.filteredProjects.length > 0 ? this.filteredProjects : this.projects;
+          if (!list.length) return;
+          this.currentIndex = (this.currentIndex + 1) % list.length;
+          this.currentProject = list[this.currentIndex];
+          this.modalTab = 'overview';
+          this._resetVideo();
+        },
+
+        prevProject() {
+          const list = this.filteredProjects.length > 0 ? this.filteredProjects : this.projects;
+          if (!list.length) return;
+          this.currentIndex = (this.currentIndex - 1 + list.length) % list.length;
+          this.currentProject = list[this.currentIndex];
+          this.modalTab = 'overview';
+          this._resetVideo();
+        },
+
+        _resetVideo() {
+          this.$nextTick(() => {
+            const vid = document.getElementById('modalVideoPlayer');
+            if (vid) { vid.currentTime = 0; vid.play().catch(() => { }); }
+          });
+        }
+      }));
+    });
+
+
+    /* ── Particle canvas ─────────────────────────────────── */
+    (function initParticles() {
+      const canvas = document.getElementById('particleCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const count = 70;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * 1920,
+          y: Math.random() * 1080,
+          r: Math.random() * 1.5 + 0.4,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3,
+          a: Math.random() * 0.6 + 0.1
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(122,160,255,${p.a})`;
+          ctx.fill();
+
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.x < 0) p.x = W;
+          if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H;
+          if (p.y > H) p.y = 0;
+        });
+
+        // Connect nearby particles
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 130) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(48,92,222,${0.15 * (1 - dist / 130)})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+</body>
+
+</html>
