@@ -1,0 +1,2 @@
+- Membership showcase (VIP and VVIP) -> Limiting videos availabe
+- Genre di navbar + fix bugs 
